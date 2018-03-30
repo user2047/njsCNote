@@ -15,8 +15,7 @@
 //   rl.close();
 // })
 
-
-constant fs = require("fs");
+const fs = require("fs");
 
 function readNotes() {
   try {
@@ -25,7 +24,7 @@ function readNotes() {
   }
   catch (error) {
     console.log(error);
-    return [];
+    return {};
   };
 }
 
@@ -39,42 +38,78 @@ function logNotes(note) {
   console.log(note.body);
 };
 
-
-
-
 function createNote(title,body) {
-  var note = {
-    title,
-    body
-  };
   var notes = readNotes();
-  var duplicateNotes = notes.filter((note) => {
-    return notes.title == title;
-  })
-  if (duplicateNotes.length === 0) {
-    notes.push(note);
+  if (notes[title]) {
+    console.log("note already exists");
+  } else {
+    notes[title] = body
     writeNotes(notes);
-    return note;
   }
 }
 
 function readNote(title) {
   var notes = readNotes();
-  var filteredNotes = notes.filter((note) => {
-    note.title == title;
-  })
-  return filteredNotes[0];
+  console.log(notes[title]);
+
 }
 
-function updateNote(title, newTitle, newBody) {
+function updateNote(title, body) {
   var notes = readNotes();
-  var filteredNotes = notes.filter((note) => {
-    note.title !== title;
-  })
+  if (notes[title]) {
+    notes[title] = body;
+    writeNotes(notes);
+  } else {
 
+    console.log("note does not exist");
+  }
 }
 
 function deleteNote(title) {
   var notes = readNotes();
-
+  if (notes[title]) {
+    delete notes[title]
+    writeNotes(notes)
+  } else {
+    console.log("note does not exist");
+  }
 }
+
+function listNotes() {
+  var notes = readNotes();
+  // for (index = 0; index < Object.keys(notes).length; index++) {
+  //   logNotes(index);
+  console.log(notes);
+}
+
+function wipeNotes() {
+  var notes = {}
+  writeNotes(notes)
+}
+
+
+
+
+wipeNotes();
+
+console.log("creating Notes...");
+createNote("head1", "body");
+createNote("head2", "body");
+createNote("head3", "body");
+
+
+
+listNotes();
+
+
+console.log("updating notes...");
+
+updateNote("head2", "newBody");
+
+readNote("head2");
+
+
+console.log("deleting notes...");
+deleteNote("head3");
+
+listNotes();
